@@ -1,6 +1,7 @@
 package com.example.musicapp.component
 
 import android.app.Application
+import com.example.musicapp.application.MyApplication
 import com.example.musicapp.module.NetworkModule
 import dagger.BindsInstance
 import dagger.Component
@@ -18,7 +19,7 @@ interface AppComponent {
     @Component.Builder
      interface Builder {
         @BindsInstance
-        fun application(application: Application): Builder
+        fun application(application: MyApplication): Builder
         fun build(): AppComponent
     }
 }

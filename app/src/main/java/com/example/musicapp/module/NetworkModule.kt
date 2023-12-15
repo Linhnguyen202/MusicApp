@@ -2,6 +2,7 @@ package com.example.musicapp.module
 
 import com.example.musicapp.api.MusicApi
 import com.example.musicapp.utils.Constants
+import com.example.musicapp.utils.NetworkConnectionInterceptor
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -25,11 +26,14 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient() : OkHttpClient {
+    fun provideOkHttpClient(
+        networkConnectionInterceptor: NetworkConnectionInterceptor
+    ) : OkHttpClient {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .addInterceptor(networkConnectionInterceptor)
             .build()
 
         return client

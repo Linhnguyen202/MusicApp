@@ -2,6 +2,7 @@ package com.example.musicapp.component
 
 import androidx.fragment.app.FragmentActivity
 import com.example.musicapp.MainActivity
+import com.example.musicapp.WebviewScreen
 import com.example.musicapp.layout.*
 import com.example.musicapp.module.MainModule
 import com.example.musicapp.scope.ActivityScope
@@ -14,6 +15,7 @@ import dagger.Subcomponent
 public interface MainComponent {
     fun inject(activity: MainActivity)
 
+    fun injectWebView(activity: WebviewScreen)
     fun injectHome(homeScreen: HomeScreen)
 
     fun injectSearch(searchScreen: SearchScreen)

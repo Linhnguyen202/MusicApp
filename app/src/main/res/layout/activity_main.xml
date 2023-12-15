@@ -69,12 +69,25 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/internetWrapper"
         app:menu="@menu/menu_bottom_navigation"
         android:background="@color/black"
         app:itemIconTint="@color/custom_color_bottom_nav"
         app:itemTextColor="@color/custom_color_bottom_nav"
         />
+    <RelativeLayout
+        android:id="@+id/internetWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:paddingVertical="4dp">
+        <TextView
+            android:text="Music app is offline"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
 
     <include layout="@layout/player_view"
         android:id="@+id/playerView"

@@ -64,7 +64,6 @@ class PlaylistSheet : BottomSheetDialogFragment() {
             when(it){
                 is Resource.Success -> {
                     it.data.let { UserPlaylistResponse ->
-                        Log.d("playlist",UserPlaylistResponse!!.data.toString())
                         adapter.differ.submitList(UserPlaylistResponse!!.data)
                     }
                 }

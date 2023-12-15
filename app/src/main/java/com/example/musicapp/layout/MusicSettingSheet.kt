@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.musicapp.MainActivity
 import com.example.musicapp.R
 import com.example.musicapp.databinding.FragmentMusicScreenBinding
 import com.example.musicapp.databinding.FragmentMusicSettingSheetBinding
@@ -31,6 +32,9 @@ class MusicSettingSheet : BottomSheetDialogFragment() {
         binding.addPlaylistBtn.setOnClickListener {
             PlaylistSheet().show(parentFragmentManager,"playListSheet")
             this.dismiss()
+        }
+        binding.watchMvBtn.setOnClickListener {
+            (activity as MainActivity).getMv((activity as MainActivity).mediaService.player!!.currentMediaItem!!.mediaId)
         }
     }
 

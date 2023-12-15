@@ -9,6 +9,8 @@ import javax.inject.Inject
 class MusicRepository @Inject constructor(val api: MusicApi) {
     suspend fun getMusic(type : String) = api.getMusic(type)
 
+    suspend fun getMusicDetail(id : String) = api.getMusicInfo(id)
+
     suspend fun searchMusic(query : String) = api.searchMusic(query)
 
     suspend fun addPlaylist (playlistBody: PlaylistBody, header: String) = api.makePlayList(playlistBody,header)

@@ -1,6 +1,7 @@
 package com.example.musicapp.api
 
 import com.example.musicapp.utils.Constants.Companion.BASE_URL
+import com.example.musicapp.utils.NetworkConnectionInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

@@ -52,7 +52,6 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
     }
     override fun onCreate() {
         super.onCreate()
-        Log.d("coder service","MyService on create" + this.toString())
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         var bunble = intent?.extras
@@ -164,7 +163,6 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         mediaPlayer!!.start()
     }
     override fun onError(mediaPlayer: MediaPlayer, what: Int, extra: Int): Boolean {
-        Log.d("mediaError","error")
         return false
     }
     override fun onDestroy() {
@@ -172,6 +170,7 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         player?.release()
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun sendNotification() {
         val mediaSession : MediaSessionCompat = MediaSessionCompat(this,"tag")
         val notificationBuilder : NotificationCompat.Builder = NotificationCompat.Builder(this,

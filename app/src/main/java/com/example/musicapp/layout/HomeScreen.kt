@@ -71,7 +71,7 @@ class HomeScreen : Fragment() {
                     }
                 }
                 is Resource.Error -> {
-
+                    Toast.makeText(requireContext(),it.message,Toast.LENGTH_LONG).show()
                 }
                 is Resource.Loading -> {
                     Toast.makeText(requireContext(),"Loading",Toast.LENGTH_LONG).show()
@@ -89,7 +89,7 @@ class HomeScreen : Fragment() {
                     }
                 }
                 is Resource.Error -> {
-
+                    Toast.makeText(requireContext(),it.message,Toast.LENGTH_LONG).show()
                 }
                 is Resource.Loading -> {
                     Toast.makeText(requireContext(),"Loading",Toast.LENGTH_LONG).show()

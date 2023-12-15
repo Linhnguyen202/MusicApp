@@ -1,32 +1,24 @@
 package com.example.musicapp
 
-import android.app.Notification
 import android.content.*
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
-import android.util.Log
 
 import android.view.MenuItem
 
 import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.NotificationCompat
-import androidx.core.net.toUri
 
 import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.musicapp.adapter.ViewPagerAdapter
 import com.example.musicapp.application.MyApplication
-import com.example.musicapp.application.MyApplication.Companion.CHANNEL_MUSIC
-import com.example.musicapp.broadcast.MyReceiver
 
 import com.example.musicapp.component.MainComponent
 import com.example.musicapp.databinding.ActivityMainBinding
@@ -36,11 +28,11 @@ import com.example.musicapp.model.Music
 import com.example.musicapp.repository.MusicRepository
 import com.example.musicapp.service.MediaService
 import com.example.musicapp.utils.MusicStatus
+import com.example.musicapp.utils.NetworkConnection
 import com.example.musicapp.viewmodel.PlaylistViewModel.PlaylistViewModel
 import com.example.musicapp.viewmodel.PlaylistViewModel.PlaylistViewModelFactory
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.Player
 
 import com.google.android.material.navigation.NavigationBarView
@@ -64,6 +56,9 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var component : MainComponent
 
+    private val networkConnection: NetworkConnection by lazy {
+        NetworkConnection(this)
+    }
 
     val broadcastReceiver : BroadcastReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -95,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadcastReceiver)
@@ -169,6 +165,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -180,7 +178,6 @@ class MainActivity : AppCompatActivity() {
         bindingPlayerView = binding.playerView
         //register broadcast
         registerReceiver(broadcastReceiver, IntentFilter("music"))
-
 
         viewModelFactory = PlaylistViewModelFactory(MyApplication(),repository)
         viewModel =  ViewModelProvider(this,viewModelFactory)[PlaylistViewModel::class.java]
@@ -229,9 +226,21 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+        // register network Connection
+
+        networkConnection.observe(this) { isConnected ->
+            if(isConnected){
+                binding.internetWrapper.visibility = View.GONE
+            }
+            else{
+                binding.internetWrapper.visibility = View.VISIBLE
+            }
+        }
+
 
         addEvents()
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -375,6 +384,17 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    public fun getMv(music: String){
+        val intent = Intent(this,WebviewScreen::class.java)
+        intent.putExtra("music",music)
+        if(mediaService.player!!.isPlaying){
+            mediaService.handleActionMusic(MusicStatus.PAUSE_ACTION)
+            bindingPlayerView.playButton.setImageResource(R.drawable.ic_baseline_play_circle_24)
+            binding.hanleStartMusicBottom.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+
+        }
+        startActivity(intent)
+    }
 
     public fun createTime(duration : Int) : String{
         var time : String = ""

@@ -77,5 +77,9 @@ interface MusicApi {
         @Header("Authorization") token: String
     ) : Response<DeleteMusicResponse>
 
+    @GET("music/get-by-id")
+    suspend fun getMusicInfo(
+        @Query("_id") id : String,
+    ) : Response<MusicDetailResponse>
 
 }
