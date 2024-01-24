@@ -71,6 +71,8 @@ class HomeScreen : Fragment() {
     private fun getData() {
         viewModel.getTrending("trending")
         viewModel.getNew("new-music")
+        binding.progessBar1.visibility = View.VISIBLE
+
     }
 
     private fun addEvents() {
@@ -86,6 +88,7 @@ class HomeScreen : Fragment() {
             when(it){
                 is Resource.Success -> {
                     it.data?.let { MusicResponse ->
+                        binding.progessBar2.visibility = View.GONE
                         newMusicAdapter.differ.submitList(MusicResponse.data)
 
                     }
@@ -94,7 +97,7 @@ class HomeScreen : Fragment() {
                     Toast.makeText(requireContext(),it.message,Toast.LENGTH_LONG).show()
                 }
                 is Resource.Loading -> {
-                    Toast.makeText(requireContext(),"Loading",Toast.LENGTH_LONG).show()
+                    binding.progessBar2.visibility = View.VISIBLE
                 }
 
             }
@@ -103,17 +106,19 @@ class HomeScreen : Fragment() {
             when(it){
                 is Resource.Success -> {
                     it.data?.let { MusicResponse ->
+                        binding.progessBar1.visibility = View.GONE
                         trendingAdapter.differ.submitList(MusicResponse.data)
                         binding.songTitle.text = MusicResponse.data.get(0).name_music;
                         binding.artistTitle.text = MusicResponse.data.get(0).name_singer;
                         Glide.with(this).load(MusicResponse.data.get(0).image_music).into(binding.imageSong)
+
                     }
                 }
                 is Resource.Error -> {
                     Toast.makeText(requireContext(),it.message,Toast.LENGTH_LONG).show()
                 }
                 is Resource.Loading -> {
-                    Toast.makeText(requireContext(),"Loading",Toast.LENGTH_LONG).show()
+                    binding.progessBar1.visibility = View.VISIBLE
                 }
 
             }

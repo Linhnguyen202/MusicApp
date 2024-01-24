@@ -129,21 +129,7 @@ class MenuScreen : Fragment() {
     }
 
     private fun addEvents() {
-        binding.toolbar.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.addIcon -> {
-                    addPlaylist()
-                    true
-                }
-                R.id.searchIcon -> {
-                    true
-                }
 
-                else -> {
-                    true
-                }
-            }
-        }
     }
     private fun getPlaylist() {
         val token = "Bearer " + sharePreferencesUtils.getToken(requireContext())
@@ -151,9 +137,7 @@ class MenuScreen : Fragment() {
 
     }
 
-    private fun addPlaylist() {
-        PlaylistForm().show(parentFragmentManager,"mewtastTag")
-    }
+
 
 
     private val deletePlaylist : (Playlist)->Unit = {

@@ -126,7 +126,7 @@ class PlaylistListView : Fragment() {
             when(it){
                 is Resource.Success -> {
                     it.data.let { DeletePlaylistResponse ->
-                        (activity as MenuScreen).viewModel.getPlaylistDataList(requireArguments().get(DATA).toString(),token)
+                       viewModel.getPlaylistDataList(requireArguments().get(DATA).toString(),token)
                     }
                 }
                 is Resource.Error -> {
@@ -149,7 +149,7 @@ class PlaylistListView : Fragment() {
     }
 
     private val deleteMusic : (String,String) -> Unit = { id, music_id ->
-        (requireParentFragment() as MenuScreen).viewModel.deleteMusic(id,music_id,token)
+       viewModel.deleteMusic(id,music_id,token)
 
     }
 }

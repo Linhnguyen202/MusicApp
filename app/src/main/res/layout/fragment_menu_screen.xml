@@ -12,7 +12,6 @@
         android:id="@+id/toolbar"
         app:title="Library"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/toolbar_menu"
         />
 
     <androidx.recyclerview.widget.RecyclerView

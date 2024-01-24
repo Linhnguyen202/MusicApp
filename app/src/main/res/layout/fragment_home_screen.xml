@@ -129,6 +129,16 @@
                 android:fontFamily="@font/afacad_bold"
                 android:textSize="30sp"
                 android:layout_marginBottom="10dp"/>
+            <ProgressBar
+                android:id="@+id/progessBar1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:clipChildren="false"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone"
+                android:layout_below="@+id/titleMusic"
+                />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMusicHome"
                 android:orientation="horizontal"
@@ -152,6 +162,16 @@
                 android:fontFamily="@font/afacad_bold"
                 android:textSize="30sp"
                 android:layout_marginBottom="10dp"/>
+            <ProgressBar
+                android:id="@+id/progessBar2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:clipChildren="false"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone"
+                android:layout_below="@+id/titleMusic2"
+                />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMusicHome2"
                 android:orientation="horizontal"
