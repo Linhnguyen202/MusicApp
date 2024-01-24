@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="14dp"
-    android:id="@+id/itemContainer">
+    android:id="@+id/itemContainer"
+    android:background="#24242E"
+    android:layout_marginBottom="10dp">
     <TextView
         android:id="@+id/playlistItemTitle"
         android:layout_width="wrap_content"

@@ -6,8 +6,7 @@
     android:orientation="vertical"
     android:paddingBottom="60dp"
     android:id="@+id/playerView"
-    android:backgroundTint="@color/black"
-    android:background="@color/black"
+    android:background="#151521"
     android:visibility="gone">
     <include layout="@layout/custom_toolbar_musicscreen" android:id="@+id/playerToolbar"
         />

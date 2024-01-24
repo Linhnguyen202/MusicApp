@@ -29,6 +29,8 @@ public interface MainComponent {
     fun injectPlaylistSheet(playlistSheet: PlaylistSheet)
 
     fun injectPlaylistForm(playlistForm: PlaylistForm)
+
+    fun injectPlaylistMusic(playlistListView: PlaylistListView)
     @Subcomponent.Factory
         interface Factory{
             fun create(@BindsInstance fragmentActivity: FragmentActivity) : MainComponent

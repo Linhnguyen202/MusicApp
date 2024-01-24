@@ -25,7 +25,6 @@ import javax.inject.Inject
 
 class SearchScreen : Fragment() {
     lateinit var binding: FragmentSearchScreenBinding
-    var searchText = ""
     @Inject
     lateinit var repository : MusicRepository
 

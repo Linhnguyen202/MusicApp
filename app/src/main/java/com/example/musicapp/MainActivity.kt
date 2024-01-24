@@ -1,5 +1,6 @@
 package com.example.musicapp
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
@@ -8,10 +9,13 @@ import android.os.Handler
 import android.os.IBinder
 
 import android.view.MenuItem
+import android.view.MotionEvent
 
 import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.constraintlayout.motion.widget.OnSwipe
+import androidx.constraintlayout.widget.ConstraintSet.Motion
 
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
@@ -49,10 +53,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var viewPagerAdapter : ViewPagerAdapter
 
-    lateinit var viewModelFactory : PlaylistViewModelFactory
-    lateinit var viewModel: PlaylistViewModel
-    @Inject
-    lateinit var repository : MusicRepository
+
+
 
     lateinit var component : MainComponent
 
@@ -93,21 +95,26 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if(isServiceConnected){
+            unbindService(serviceConnection)
+            val intent : Intent = Intent(this, MediaService::class.java)
+            stopService(intent)
+        }
         unregisterReceiver(broadcastReceiver)
     }
-    private val serviceConnection : ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-           val myBinder : MediaService.MediaServiceBinder = service as MediaService.MediaServiceBinder
-            mediaService = myBinder.getService()
-            isServiceConnected = true
-            handlePlayer()
-        }
+        private val serviceConnection : ServiceConnection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+               val myBinder : MediaService.MediaServiceBinder = service as MediaService.MediaServiceBinder
+                mediaService = myBinder.getService()
+                isServiceConnected = true
+                handlePlayer()
+            }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isServiceConnected = false
-        }
+            override fun onServiceDisconnected(name: ComponentName?) {
+                isServiceConnected = false
+            }
 
-    }
+        }
 
     private fun handlePlayer() {
         mediaService.player!!.addListener(object : Player.Listener{
@@ -121,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 bindingPlayerView.mySeekbar.progress = mediaService.player!!.currentPosition.toInt()
 
                 // change view in bottomView
-                binding.viewMusic.visibility = View.VISIBLE
+                binding.layoutBottomMusic.visibility = View.VISIBLE
                 binding.musicTitle.text = mediaItem!!.mediaMetadata.title
                 Glide.with(this@MainActivity).load(mediaItem.mediaMetadata.artworkUri).into(binding.musicBottomImg)
                 binding.authorName.text = mediaItem.mediaMetadata.artist
@@ -131,7 +138,6 @@ class MainActivity : AppCompatActivity() {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 if(playbackState == ExoPlayer.STATE_READY){
-
                     // change view in playerView
                     bindingPlayerView.playerToolbar.songTitle.text = mediaService.player!!.currentMediaItem!!.mediaMetadata.title
                     Glide.with(this@MainActivity).load(mediaService.player!!.currentMediaItem!!.mediaMetadata.artworkUri).into(bindingPlayerView.imageView)
@@ -139,8 +145,9 @@ class MainActivity : AppCompatActivity() {
                     bindingPlayerView.mySeekbar.max = mediaService.player!!.duration.toInt()
                     bindingPlayerView.mySeekbar.progress = mediaService.player!!.currentPosition.toInt()
                     bindingPlayerView.playButton.setImageResource(R.drawable.ic_baseline_pause_circle_24)
+
                     // change view in bottomView
-                    binding.viewMusic.visibility = View.VISIBLE
+                    binding.layoutBottomMusic.visibility = View.VISIBLE
                     binding.musicTitle.text =  mediaService.player!!.currentMediaItem!!.mediaMetadata.title
                     Glide.with(this@MainActivity).load(mediaService.player!!.currentMediaItem!!.mediaMetadata.artworkUri).into(binding.musicBottomImg)
                     binding.authorName.text = mediaService.player!!.currentMediaItem!!.mediaMetadata.artist
@@ -158,6 +165,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
             }
+
         })
 
 
@@ -179,8 +187,10 @@ class MainActivity : AppCompatActivity() {
         //register broadcast
         registerReceiver(broadcastReceiver, IntentFilter("music"))
 
-        viewModelFactory = PlaylistViewModelFactory(MyApplication(),repository)
-        viewModel =  ViewModelProvider(this,viewModelFactory)[PlaylistViewModel::class.java]
+        val intent : Intent = Intent(this, MediaService::class.java)
+        bindService(intent,serviceConnection, BIND_AUTO_CREATE)
+
+
 
         binding.bottomNavigation.setOnItemSelectedListener(object : NavigationBarView.OnItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -246,6 +256,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
 
     }
+    @SuppressLint("ClickableViewAccessibility")
     private fun addEvents() {
         // handle play or pause music
         binding.hanleStartMusicBottom.setOnClickListener {
@@ -260,18 +271,29 @@ class MainActivity : AppCompatActivity() {
                 bindingPlayerView.playButton.setImageResource(R.drawable.ic_baseline_pause_circle_24)
             }
         }
+
+        //handle next music
+        binding.handleNextMusicBottom.setOnClickListener {
+            if(mediaService.player!!.isPlaying){
+               mediaService.handleActionMusic(MusicStatus.NEXT_ACTION)
+            }
+        }
+        // handle pre music
+        binding.handlePreMusicBottom.setOnClickListener {
+            if(mediaService.player!!.isPlaying){
+                mediaService.handleActionMusic(MusicStatus.PRE_ACTION)
+            }
+        }
         // handling with bottom music
         binding.layoutBottomMusic.setOnClickListener {
             binding.playerView.playerView.visibility = View.VISIBLE
             binding.bottomNavigation.visibility = View.GONE
-            binding.layoutBottomMusic.visibility = View.GONE
 
         }
         // handle close player View
         bindingPlayerView.playerToolbar.backBtn.setOnClickListener {
             binding.playerView.playerView.visibility = View.GONE
             binding.bottomNavigation.visibility = View.VISIBLE
-            binding.layoutBottomMusic.visibility = View.VISIBLE
         }
         // handle open bottom setting view
         binding.playerView.playerToolbar.menuSettingMusic.setOnClickListener {
@@ -375,7 +397,6 @@ class MainActivity : AppCompatActivity() {
 
         // foreground service
         startService(intent)
-        bindService(intent,serviceConnection, BIND_AUTO_CREATE)
     }
 
 

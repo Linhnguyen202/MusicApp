@@ -63,6 +63,8 @@ class LoginSrcreen : AppCompatActivity(), View.OnClickListener, View.OnFocusChan
                     it.data.let  { UserResponse ->
                         sharePreferencesUtils.saveToken(UserResponse!!.accessToken,this)
                         sharePreferencesUtils.saveUser(UserResponse!!.data,this)
+                        binding.progessBar.visibility = View.GONE
+                        binding.signinTile.visibility = View.VISIBLE
                         val intent = Intent(this,MainActivity::class.java)
                         startActivity(intent)
                     }
@@ -78,7 +80,8 @@ class LoginSrcreen : AppCompatActivity(), View.OnClickListener, View.OnFocusChan
                     }
                 }
                 is Resource.Loading -> {
-                    Toast.makeText(this,"Loading",Toast.LENGTH_LONG).show()
+                   binding.progessBar.visibility = View.VISIBLE
+                    binding.signInTitle.visibility = View.GONE
                 }
             }
         })

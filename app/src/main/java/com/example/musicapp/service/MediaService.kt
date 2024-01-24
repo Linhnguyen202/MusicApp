@@ -1,15 +1,19 @@
 package com.example.musicapp.service
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
@@ -22,6 +26,11 @@ import com.example.musicapp.utils.MusicStatus
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.URL
 
 
 class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
@@ -37,7 +46,6 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         const val ACTION_PLAY = 2;
 
     }
-    var musicList : ArrayList<MediaItem> = arrayListOf<MediaItem>()
     inner class MediaServiceBinder : Binder(){
         fun getService() : MediaService {
            return this@MediaService
@@ -172,17 +180,25 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
     @SuppressLint("SuspiciousIndentation")
     private fun sendNotification() {
+        // intent comback view
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
         val mediaSession : MediaSessionCompat = MediaSessionCompat(this,"tag")
         val notificationBuilder : NotificationCompat.Builder = NotificationCompat.Builder(this,
             MyApplication.CHANNEL_MUSIC)
             .setSmallIcon(R.drawable.ic_baseline_audiotrack_24)
             .setContentTitle(player!!.mediaMetadata.title)
             .setContentText(player!!.mediaMetadata.artist)
+            .setContentIntent(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+            .setStyle(androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(1).setMediaSession(mediaSession.sessionToken))
             .setSound(null)
             .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
                 .setShowActionsInCompactView(0,1,2)
                 .setMediaSession(mediaSession.getSessionToken()))
-            notificationBuilder.setSilent(true)
+        notificationBuilder.setSilent(true)
+        applyImageUrl(notificationBuilder,player!!.mediaMetadata.artworkUri.toString())
         if(isPLaying){
             notificationBuilder
                 .addAction(R.drawable.ic_baseline_skip_previous_24,"previous",getPendingIntent(this,MusicStatus.PRE_ACTION))
@@ -197,9 +213,33 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         }
         val notification = notificationBuilder.build()
         val managerCompat : NotificationManagerCompat = NotificationManagerCompat.from(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
         managerCompat.notify(1,notification)
     }
 
+    fun applyImageUrl(
+        builder: NotificationCompat.Builder,
+        imageUrl: String
+    ) = runBlocking {
+        val url = URL(imageUrl)
+
+        withContext(Dispatchers.IO) {
+            try {
+                val input = url.openStream()
+                BitmapFactory.decodeStream(input)
+            } catch (e: IOException) {
+                null
+            }
+        }?.let { bitmap ->
+            builder.setLargeIcon(bitmap)
+        }
+    }
 
     private fun getPendingIntent(context: Context, action: MusicStatus): PendingIntent? {
         val intent = Intent(this,MyReceiver::class.java)

@@ -53,6 +53,8 @@ class RegisterScreen : AppCompatActivity(), View.OnClickListener, View.OnFocusCh
                     it.data.let { UserResponse ->
                         sharePreferencesUtils.saveToken(UserResponse!!.accessToken,this)
                         sharePreferencesUtils.saveUser(UserResponse!!.data,this)
+                        binding.progessBar.visibility = View.GONE
+                        binding.signUpTitle.visibility = View.VISIBLE
                         val intent = Intent(this,MainActivity::class.java)
                         startActivity(intent)
                     }
@@ -68,7 +70,8 @@ class RegisterScreen : AppCompatActivity(), View.OnClickListener, View.OnFocusCh
                     }
                 }
                 is Resource.Loading -> {
-                    Toast.makeText(this,"Loading", Toast.LENGTH_LONG).show()
+                   binding.progessBar.visibility = View.VISIBLE
+                    binding.signUpTitle.visibility = View.GONE
                 }
             }
         })

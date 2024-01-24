@@ -4,26 +4,38 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import com.example.musicapp.MainActivity
 import com.example.musicapp.R
 import com.example.musicapp.adapter.MusicPlaylistAdapter
 import com.example.musicapp.adapter.PlaylistMainAdapter
 import com.example.musicapp.adapter.SearchAdapter
+import com.example.musicapp.application.MyApplication
 import com.example.musicapp.databinding.FragmentPlaylistListViewBinding
 import com.example.musicapp.databinding.FragmentPlaylistSheetBinding
 import com.example.musicapp.model.Music
 import com.example.musicapp.model.MusicPlaylistData
 import com.example.musicapp.model.Playlist
+import com.example.musicapp.repository.MusicRepository
 import com.example.musicapp.share.sharePreferencesUtils
 import com.example.musicapp.utils.Resource
+import com.example.musicapp.viewmodel.PlaylistViewModel.PlaylistViewModel
+import com.example.musicapp.viewmodel.PlaylistViewModel.PlaylistViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 
 
 class PlaylistListView : Fragment() {
+
+    lateinit var viewModelFactory : PlaylistViewModelFactory
+    lateinit var viewModel: PlaylistViewModel
+    @Inject
+    lateinit var repository : MusicRepository
     companion object {
         const val DATA = "key"
         const val TITLE = "title_key"
@@ -57,16 +69,23 @@ class PlaylistListView : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = MusicPlaylistAdapter(openMusic,deleteMusic)
-        addEvents()
-        binding.customToolbar.titleToolbar.text = arguments!!.get(TITLE).toString()
-        binding.musicList.apply {
-            adapter = this@PlaylistListView.adapter
-        }
-        (activity as MainActivity).viewModel.getPlaylistDataList(arguments!!.get(DATA).toString(),token)
+        (activity as MainActivity).component.injectPlaylistMusic(this)
+        setup()
+        viewModel.getPlaylistDataList(requireArguments().get(DATA).toString(),token)
         observerData()
 
 
+    }
+
+    private fun setup() {
+        viewModelFactory = PlaylistViewModelFactory(MyApplication(),repository)
+        viewModel =  ViewModelProvider(this,viewModelFactory)[PlaylistViewModel::class.java]
+        adapter = MusicPlaylistAdapter(openMusic,deleteMusic)
+        addEvents()
+        binding.customToolbar.titleToolbar.text = requireArguments().get(TITLE).toString()
+        binding.musicList.apply {
+            adapter = this@PlaylistListView.adapter
+        }
     }
 
     private fun addEvents() {
@@ -87,7 +106,7 @@ class PlaylistListView : Fragment() {
 
     }
     private fun observerData() {
-        (activity as MainActivity).viewModel.playlistData.observe(viewLifecycleOwner){
+        viewModel.playlistData.observe(viewLifecycleOwner){
             when(it){
                 is Resource.Success -> {
                     it.data.let { PlaylistDataResponse ->
@@ -103,11 +122,11 @@ class PlaylistListView : Fragment() {
                 }
             }
         }
-        (activity as MainActivity).viewModel.deleteMusicData.observe(viewLifecycleOwner){
+        viewModel.deleteMusicData.observe(viewLifecycleOwner){
             when(it){
                 is Resource.Success -> {
                     it.data.let { DeletePlaylistResponse ->
-                        (activity as MainActivity).viewModel.getPlaylistDataList(arguments!!.get(DATA).toString(),token)
+                        (activity as MenuScreen).viewModel.getPlaylistDataList(requireArguments().get(DATA).toString(),token)
                     }
                 }
                 is Resource.Error -> {
@@ -130,7 +149,7 @@ class PlaylistListView : Fragment() {
     }
 
     private val deleteMusic : (String,String) -> Unit = { id, music_id ->
-        (activity as MainActivity).viewModel.deleteMusic(id,music_id,token)
+        (requireParentFragment() as MenuScreen).viewModel.deleteMusic(id,music_id,token)
 
     }
 }

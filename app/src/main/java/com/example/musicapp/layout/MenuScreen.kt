@@ -1,9 +1,16 @@
 package com.example.musicapp.layout
 
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -27,12 +34,21 @@ import javax.inject.Inject
 class MenuScreen : Fragment() {
     lateinit var binding : FragmentMenuScreenBinding
     lateinit var adapter: PlaylistMainAdapter
+    lateinit var broadcastReceiver : BroadcastReceiver
+    lateinit var viewModelFactory : PlaylistViewModelFactory
+    lateinit var viewModel: PlaylistViewModel
+    @Inject
+    lateinit var repository : MusicRepository
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentMenuScreenBinding.inflate(layoutInflater)
-
+        setUpBroadCast()
+        // dang ky broadcast
+        requireContext().registerReceiver(broadcastReceiver, IntentFilter("UPDATE_ACTION"),
+            Context.RECEIVER_NOT_EXPORTED)
         return binding.root
 
     }
@@ -40,7 +56,18 @@ class MenuScreen : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // huuy dang ki
+        requireContext().unregisterReceiver(broadcastReceiver)
+    }
+    private fun setUpBroadCast(){
+        broadcastReceiver = object : BroadcastReceiver(){
+            override fun onReceive(context: Context?, intent: Intent?) {
+                getPlaylist()
+            }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as MainActivity).component.injectMenu(this)
@@ -49,14 +76,20 @@ class MenuScreen : Fragment() {
         binding.playlistList.apply {
             adapter = this@MenuScreen.adapter
         }
+        setup()
         addEvents()
         getPlaylist()
         observerData()
 
     }
 
+    private fun setup() {
+        viewModelFactory = PlaylistViewModelFactory(MyApplication(),repository)
+        viewModel =  ViewModelProvider(this,viewModelFactory)[PlaylistViewModel::class.java]
+    }
+
     private fun observerData() {
-        (activity as MainActivity).viewModel.getPlaylist.observe(viewLifecycleOwner){
+       viewModel.getPlaylist.observe(viewLifecycleOwner){
             when(it){
                 is Resource.Success -> {
                     it.data.let { UserPlaylistResponse ->
@@ -73,7 +106,7 @@ class MenuScreen : Fragment() {
 
             }
         }
-        (activity as MainActivity).viewModel.deletePlaylist.observe(viewLifecycleOwner){
+        viewModel.deletePlaylist.observe(viewLifecycleOwner){
             when(it){
                 is Resource.Success -> {
                     it.data.let { DeletePlalistResponse ->
@@ -114,7 +147,7 @@ class MenuScreen : Fragment() {
     }
     private fun getPlaylist() {
         val token = "Bearer " + sharePreferencesUtils.getToken(requireContext())
-        (activity as MainActivity).viewModel.getUserPlaylist(token)
+       viewModel.getUserPlaylist(token)
 
     }
 
@@ -125,11 +158,12 @@ class MenuScreen : Fragment() {
 
     private val deletePlaylist : (Playlist)->Unit = {
         val token = "Bearer " + sharePreferencesUtils.getToken(requireContext())
-        (activity as MainActivity).viewModel.deleteUserPlaylist(it._id,token)
+        viewModel.deleteUserPlaylist(it._id,token)
     }
+    @SuppressLint("SuspiciousIndentation")
     private val openEditPlaylistForm : (Playlist) -> Unit = {
         val playlistForm = PlaylistForm.newInstance(it._id)
-        playlistForm.show(parentFragmentManager,"EDIT_FORM")
+            playlistForm.show(parentFragmentManager,"EDIT_FORM")
     }
     private val openPlaylist : (Playlist) -> Unit = {
         val fragment : PlaylistListView = PlaylistListView.newInstance(it._id,it.name_list)

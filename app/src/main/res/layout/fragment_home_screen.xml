@@ -1,19 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".layout.HomeScreen">
-    <include layout="@layout/custom_toolbar_homecreen" android:id="@+id/toolbar_home"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMusicHome"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_home"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_height="match_parent">
+        <include layout="@layout/custom_toolbar_homecreen" android:id="@+id/toolbar_home"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/songCard"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:cardCornerRadius="10dp"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_home"
+            android:layout_marginHorizontal="20dp"
+            >
+            <ImageView
+                android:id="@+id/imageSong"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bg_login"
+                android:scaleType="centerCrop"/>
+            <RelativeLayout
+                android:id="@+id/musicContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="25dp"
+                android:background="@drawable/background_shadow"
+                >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/numberTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30sp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:text="#1"
+                    android:fontFamily="@font/afacad_bold"
+                    />
+                <TextView
+                    android:id="@+id/songTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="40sp"
+                    android:layout_marginTop="15dp"
+                    android:layout_below="@+id/numberTitle"
+                    android:text="Rock Star"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_marginRight="20dp"
+                    android:fontFamily="@font/afacad_bold"
+                    />
+                <TextView
+                    android:id="@+id/artistTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="25sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/songTitle"
+                    android:text="(feat.Roddy rich)"
+                    android:fontFamily="@font/afacad_bold"
+                    android:ellipsize="end"
+                    android:layout_marginRight="20dp"
+                    android:maxLines="1"
+                    />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="10dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/artistTitle"
+                    android:layout_marginTop="18dp"
+                    >
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/playBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="15dp"
+                        android:background="@drawable/gradient_background"
+                        >
+                        <ImageView
+                            android:id="@+id/iconPlay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:src="@drawable/ic_baseline_play_arrow_24"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="#FFFFFF"
+                            android:textSize="22sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iconPlay"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="Listen now"
+                            android:layout_marginLeft="10dp"
+                            android:fontFamily="@font/afacad_bold"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+        <RelativeLayout
+            android:id="@+id/songListContainer1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/songCard"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp">
+            <TextView
+                android:id="@+id/titleMusic"
+                android:text="Trending Music"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/afacad_bold"
+                android:textSize="30sp"
+                android:layout_marginBottom="10dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMusicHome"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleMusic" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/songListContainer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/songListContainer1"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp">
+            <TextView
+                android:id="@+id/titleMusic2"
+                android:text="New music"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/afacad_bold"
+                android:textSize="30sp"
+                android:layout_marginBottom="10dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMusicHome2"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleMusic2"
+                android:layout_marginBottom="20dp"/>
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.core.widget.NestedScrollView>

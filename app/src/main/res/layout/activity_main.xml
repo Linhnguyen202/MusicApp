@@ -6,64 +6,92 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:id="@+id/mainContainer"
+    android:background="#151521"
     >
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_above="@+id/bottomNavigation"
-        android:layout_marginBottom="56dp"/>
-    <androidx.cardview.widget.CardView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/viewMusic"
+        />
+    <RelativeLayout
+        android:id="@+id/viewMusic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/viewMusic"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="5dp"
-        app:cardCornerRadius="10dp"
-        android:visibility="gone"
-        >
-        <RelativeLayout
-            android:id="@+id/layoutBottomMusic"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation">
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="10dp">
-            <ImageView
-                android:id="@+id/musicBottomImg"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:src="@drawable/ic_launcher_background"
-                android:layout_width="40dp"
-                android:layout_height= "40dp"
-                />
-            <TextView
-                android:id="@+id/musicTitle"
-                android:layout_width="wrap_content"
-                android:text="music title"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/musicBottomImg"
-                android:layout_toStartOf="@+id/hanleStartMusicBottom"
-                android:layout_marginLeft="10dp"/>
-            <TextView
-                android:id="@+id/authorName"
-                android:layout_width="wrap_content"
-                android:text="author name"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/musicBottomImg"
-                android:layout_toStartOf="@+id/hanleStartMusicBottom"
-                android:layout_below="@id/musicTitle"
-                android:layout_marginLeft="10dp"/>
-            <ImageView
-                android:id="@+id/hanleStartMusicBottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_pause_24"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"/>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="5dp"
+            app:cardCornerRadius="10dp"
+            >
+            <RelativeLayout
+                android:id="@+id/layoutBottomMusic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:visibility="gone">
+                <ImageView
+                    android:id="@+id/musicBottomImg"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    android:src="@drawable/ic_launcher_background"
+                    android:layout_width="40dp"
+                    android:layout_height= "40dp"
+                    />
+                <TextView
+                    android:id="@+id/musicTitle"
+                    android:layout_width="wrap_content"
+                    android:text="music title"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/musicBottomImg"
+                    android:layout_toStartOf="@+id/handlePreMusicBottom"
+                    android:layout_marginLeft="10dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"/>
+                <TextView
+                    android:id="@+id/authorName"
+                    android:layout_width="wrap_content"
+                    android:text="author name"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/musicBottomImg"
+                    android:layout_toStartOf="@+id/handlePreMusicBottom"
+                    android:layout_below="@id/musicTitle"
+                    android:layout_marginLeft="10dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"/>
+                <ImageView
+                    android:id="@+id/handlePreMusicBottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_skip_previous_24"
+                    android:layout_toStartOf="@+id/hanleStartMusicBottom"
+                    android:layout_centerVertical="true"/>
+                <ImageView
+                    android:id="@+id/hanleStartMusicBottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_pause_24"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/handleNextMusicBottom"
+                    android:layout_marginHorizontal="10dp"
+                    />
+                <ImageView
+                    android:id="@+id/handleNextMusicBottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_skip_next_24"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"/>
 
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
@@ -71,7 +99,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/internetWrapper"
         app:menu="@menu/menu_bottom_navigation"
-        android:background="@color/black"
+        android:background="#151521"
         app:itemIconTint="@color/custom_color_bottom_nav"
         app:itemTextColor="@color/custom_color_bottom_nav"
         />

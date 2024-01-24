@@ -22,20 +22,22 @@
         android:text="Welcome "
         android:textColor="@color/white"
         android:textStyle="bold"
-        android:textSize="30sp"
+        android:textSize="35sp"
         android:layout_marginHorizontal="20dp"
         app:layout_constraintBottom_toTopOf="@id/signin_tile"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/afacad_bold"/>
     <TextView
         android:id="@+id/signin_tile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Register to login"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:layout_marginHorizontal="20dp"
         app:layout_constraintBottom_toTopOf="@id/nameContainer"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/afacad_bold"/>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameContainer"
         android:layout_marginTop="20dp"
@@ -122,16 +124,37 @@
         app:layout_constraintBottom_toTopOf="@id/haveAccount_btn"
         android:layout_marginBottom="20dp"
         >
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Register"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:paddingVertical="10dp"
-            />
+            android:background="@drawable/gradient_background"
+            android:padding="10dp"
+            >
+
+            <ProgressBar
+                android:id="@+id/progessBar"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_centerInParent="true"
+                android:clipChildren="false"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/signUpTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sign up"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:visibility="visible"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/afacad_bold"
+
+                />
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/haveAccount_btn"
@@ -144,9 +167,10 @@
         android:gravity="center"
         android:paddingVertical="10dp"
         android:textStyle="bold"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textAllCaps="false"
         android:layout_marginHorizontal="30dp"
+        android:fontFamily="@font/afacad_bold"
         />
 
 

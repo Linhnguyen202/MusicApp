@@ -37,7 +37,7 @@
                 android:layout_toEndOf="@id/songBanner"
                 android:layout_below="@+id/searchItemTitle"
                 android:textSize="12sp"
-
+                android:layout_marginTop="4dp"
                 />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

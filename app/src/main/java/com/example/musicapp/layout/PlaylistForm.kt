@@ -1,5 +1,6 @@
 package com.example.musicapp.layout
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class PlaylistForm : BottomSheetDialogFragment() {
     companion object {
         const val ARG_DATA = "key"
-        fun newInstance(data: String,): PlaylistForm {
+        fun newInstance(data: String): PlaylistForm {
             val fragment = PlaylistForm()
             val args = Bundle()
             args.putString(ARG_DATA, data)
@@ -56,14 +57,26 @@ class PlaylistForm : BottomSheetDialogFragment() {
         (activity as MainActivity).component.injectPlaylistForm(this)
         viewModelFactory = PlaylistViewModelFactory(MyApplication(),repository)
         viewModel =  ViewModelProvider(this,viewModelFactory)[PlaylistViewModel::class.java]
-        Toast.makeText(requireContext(),arguments?.getString("key"),Toast.LENGTH_LONG).show()
+        checkFormType()
         addEvent()
         observerData()
 
     }
 
+    private fun checkFormType() {
+        if(tag == "ADD_FORM"){
+            binding.playListTitle.setText("New Playlist")
+            binding.titleContainer.hint = "Add your new playlist"
+
+        }
+        else if(tag == "EDIT_FORM"){
+            binding.playListTitle.setText("Edit Playlist")
+            binding.titleContainer.hint = "Edit your new playlist"
+        }
+    }
+
     private fun observerData() {
-        (activity as MainActivity).viewModel.addPlaylist.observe(viewLifecycleOwner){
+       viewModel.addPlaylist.observe(viewLifecycleOwner){
             when(it){
                 is Resource.Success -> {
                     it.data.let { PlaylistResponse ->
@@ -71,7 +84,7 @@ class PlaylistForm : BottomSheetDialogFragment() {
                             Snackbar.make(getDialog()?.getWindow()!!.getDecorView(),"Add playlist Successfully",
                                 Snackbar.LENGTH_SHORT).show()
                             binding.titleEditText.text!!.clear()
-                            (activity as MainActivity).viewModel.getUserPlaylist(token)
+                            this@PlaylistForm.context?.sendBroadcast(Intent("UPDATE_ACTION"))
                         }
                     }
                 }
@@ -84,7 +97,7 @@ class PlaylistForm : BottomSheetDialogFragment() {
 
             }
         }
-        (activity as MainActivity).viewModel.updateNamePlaylist.observe(viewLifecycleOwner){
+        viewModel.updateNamePlaylist.observe(viewLifecycleOwner){
             when(it){
                 is Resource.Success -> {
                     it.data.let { UpdatePlaylistResponse ->
@@ -92,7 +105,7 @@ class PlaylistForm : BottomSheetDialogFragment() {
                             Snackbar.make(getDialog()?.getWindow()!!.getDecorView(),"Update playlist Successfully",
                                 Snackbar.LENGTH_SHORT).show()
                             binding.titleEditText.text!!.clear()
-                            (activity as MainActivity).viewModel.getUserPlaylist(token)
+                            this@PlaylistForm.context?.sendBroadcast(Intent("UPDATE_ACTION"))
                         }
                     }
                 }
@@ -128,7 +141,7 @@ class PlaylistForm : BottomSheetDialogFragment() {
     private fun editPlaylist() {
         val playList = binding.titleEditText.text.toString()
         val editPlaylistBody = EditPlaylistBody(playList,arguments?.getString("key").toString())
-        (activity as MainActivity).viewModel.updateNamePlaylist(editPlaylistBody,token)
+        viewModel.updateNamePlaylist(editPlaylistBody,token)
 
     }
 
@@ -136,7 +149,7 @@ class PlaylistForm : BottomSheetDialogFragment() {
         val playList = binding.titleEditText.text.toString()
         val musicId = (activity as MainActivity).mediaService.player!!.currentMediaItem!!.mediaId
         val playlistBody = PlaylistBody(musicId,playList)
-        (activity as MainActivity).viewModel.addUserPlaylist(playlistBody,token)
+        viewModel.addUserPlaylist(playlistBody,token)
     }
 
 }
